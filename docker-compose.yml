@@ -1,0 +1,25 @@
+
+services:
+  postgres:
+    image: postgres:16.4
+    restart: always
+    env_file: ./.env
+    container_name: app-postgres
+    environment:
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_USER=$DB_USER
+
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports: ['${DB_PORT_LOCAL}:${DB_PORT_DOCKER}']
+  app:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sscstads/bot-if:latest
+    restart: always
+    env_file: ./.env
+volumes:
+  postgres:
